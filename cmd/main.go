@@ -1,6 +1,6 @@
 package main
 
-import "github.com/lfurtado/bigram"
+import "github.com/lrfurtado/bigram"
 import "flag"
 import "fmt"
 
