@@ -1,0 +1,31 @@
+language: go
+
+branches:
+  only:
+    - master
+
+matrix:
+  include:
+    - go: 1.7.5
+    - go: 1.8
+
+before_cache:
+- rm -rf $GOPATH/src/github.com/lrfurtado/bigram/*
+- rm -rf $GOPATH/pkg/**/github.com/lfurtado/bigram
+
+cache:
+  directories:
+    - $GOPATH/src
+    - $GOPATH/pkg
+
+before_install:
+- '! grep -R ''"context"$'' * || { echo "Use golang.org/x/net/context"; false; }'
+- go vet ./...
+- diff -u <(echo -n) <(gofmt -d -s .)
+
+install:
+- go get -u -v $(go list -f '{{join .Imports "\n"}}{{"\n"}}{{join .TestImports "\n"}}' ./... | sort | uniq | grep -v golang-samples)
+
+
+script:
+- travis_wait 20 go test -p 10 -timeout 20m -v ./...;
